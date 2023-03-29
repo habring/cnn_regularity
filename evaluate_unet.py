@@ -24,6 +24,8 @@ import copy
 from models.circles_torch_dataset import *
 import os
 import matplotlib.gridspec as gridspec
+from pathlib import Path
+
 
 device = torch.device('cpu')
 torch.cuda.empty_cache()
@@ -68,7 +70,9 @@ scalings = [1,2,3]          # different resolutions, baseline, double, and tripl
 
 
 # directory to save images in
+
 output_dir = 'data/results/unet_/'
+Path(output_dir).mkdir(parents=True, exist_ok=True)
 
 # define subplots
 widths = [1]*6
