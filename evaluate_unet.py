@@ -71,7 +71,7 @@ scalings = [1,2,3]          # different resolutions, baseline, double, and tripl
 
 # directory to save images in
 
-output_dir = 'data/results/unet_/'
+output_dir = 'data/results/unet/'
 Path(output_dir).mkdir(parents=True, exist_ok=True)
 
 # define subplots
