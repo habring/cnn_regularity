@@ -207,79 +207,81 @@ with torch.no_grad():
         for i_reg,reg in enumerate(regs):
             for i_scaling,scaling in enumerate(scalings):
 
-                # Initialize torch data set for corresponding resolution
-                data = custom_dataset(circles_data,size_orig*scaling,sigma_noise)
-                testing_data = torch.utils.data.Subset(data, range(int(len(data)*0.8),len(data)))
-                noisy,img = testing_data[sample_idx[i].item()]
+                if scaling==1 or reg == 0.001:
 
-                # Get the pre-trained U-net for the corresponding resolution and compute output
-                model = UNet(n_channels_in=1, n_channels_out=1, scaling=scaling)
-                model_dir = 'models/trained_models/unet/discretizations/circles/batch_size_32/'
-                model.eval()
-                model.to(device)
-                wd = (reg/(scaling)**2)
-                model_name = 'size_orig_'+str(size_orig)+'_scaling_'+str(scaling)+'_weight_decay_'+str(wd)+'_n_epochs_'+str(n_epochs)+'.pt'
-                model_path = model_dir + model_name
-                try:
-                    model.load_state_dict(torch.load(model_path,map_location=device))
-                except:
-                    print('There are no pretrained models available. We download the weights from Zenodo...')
-                    if not os.path.exists(model_dir):
-                        os.makedirs(model_dir)
-                    os.system("wget -O " + model_path + " https://zenodo.org/record/7784039/files/" + model_name)
-                    model.load_state_dict(torch.load(model_path,map_location=device))
-                recon = model(noisy.unsqueeze(0).unsqueeze(0)).detach().cpu().numpy()
+                    # Initialize torch data set for corresponding resolution
+                    data = custom_dataset(circles_data,size_orig*scaling,sigma_noise)
+                    testing_data = torch.utils.data.Subset(data, range(int(len(data)*0.8),len(data)))
+                    noisy,img = testing_data[sample_idx[i].item()]
 
-                # Plot output image
-                im_recon = copy.deepcopy(recon)
-                im_recon = (np.clip(im_recon,img_min,img_max)-img_min)/(img_max-img_min)
-                im_recon = np.concatenate([im_recon[...,np.newaxis]]*3,axis=2)
-                im_recon[height[i]*scaling,:,0] = 1
-                im_recon[height[i]*scaling,:,1] = 0
-                im_recon[height[i]*scaling,:,2] = 0
-                if scaling==1:
-                    ax = fig_different_weightdecays.add_subplot(gs_different_weightdecays[2*i,2+i_reg])
-                    ax.set_xticks([])
-                    ax.set_yticks([])
-                    if i==0:
-                        ax.set_title('Weight decay: '+str(reg))
-                    ax.imshow(im_recon)
+                    # Get the pre-trained U-net for the corresponding resolution and compute output
+                    model = UNet(n_channels_in=1, n_channels_out=1, scaling=scaling)
+                    model_dir = 'models/trained_models/unet/discretizations/circles/batch_size_32/'
+                    model.eval()
+                    model.to(device)
+                    wd = (reg/(scaling)**2)
+                    model_name = 'size_orig_'+str(size_orig)+'_scaling_'+str(scaling)+'_weight_decay_'+str(wd)+'_n_epochs_'+str(n_epochs)+'.pt'
+                    model_path = model_dir + model_name
+                    try:
+                        model.load_state_dict(torch.load(model_path,map_location=device))
+                    except:
+                        print('There are no pretrained models available. We download the weights from Zenodo...')
+                        if not os.path.exists(model_dir):
+                            os.makedirs(model_dir)
+                        os.system("wget -O " + model_path + " https://zenodo.org/record/7784039/files/" + model_name)
+                        model.load_state_dict(torch.load(model_path,map_location=device))
+                    recon = model(noisy.unsqueeze(0).unsqueeze(0)).detach().cpu().numpy()
 
-                if reg == 0.001:
-                    ax = fig_different_resolutions.add_subplot(gs_different_resolutions[2*i,2+i_scaling])
-                    ax.set_xticks([])
-                    ax.set_yticks([])
-                    if i==0:
-                        ax.set_title('Resolution: '+str(scaling))
-                    ax.imshow(im_recon)
-                plt.imsave((output_dir+'size_orig_'+str(size_orig)+'_scaling_'+str(scaling)+'_weight_decay_'+str(wd)+'_n_epochs_'+str(n_epochs)+'_image_'+str(i)).replace('.',',')+'.png',im_recon)
+                    # Plot output image
+                    im_recon = copy.deepcopy(recon)
+                    im_recon = (np.clip(im_recon,img_min,img_max)-img_min)/(img_max-img_min)
+                    im_recon = np.concatenate([im_recon[...,np.newaxis]]*3,axis=2)
+                    im_recon[height[i]*scaling,:,0] = 1
+                    im_recon[height[i]*scaling,:,1] = 0
+                    im_recon[height[i]*scaling,:,2] = 0
+                    if scaling==1:
+                        ax = fig_different_weightdecays.add_subplot(gs_different_weightdecays[2*i,2+i_reg])
+                        ax.set_xticks([])
+                        ax.set_yticks([])
+                        if i==0:
+                            ax.set_title('Weight decay: '+str(reg))
+                        ax.imshow(im_recon)
+
+                    if reg == 0.001:
+                        ax = fig_different_resolutions.add_subplot(gs_different_resolutions[2*i,2+i_scaling])
+                        ax.set_xticks([])
+                        ax.set_yticks([])
+                        if i==0:
+                            ax.set_title('Resolution: '+str(scaling))
+                        ax.imshow(im_recon)
+                    plt.imsave((output_dir+'size_orig_'+str(size_orig)+'_scaling_'+str(scaling)+'_weight_decay_'+str(wd)+'_n_epochs_'+str(n_epochs)+'_image_'+str(i)).replace('.',',')+'.png',im_recon)
 
 
-                # Plot cut through output image
-                cut_recon = copy.deepcopy(recon[height[i]*scaling,:])
-                g = plt.figure()
-                plt.subplots_adjust(top = 1, bottom = 0, right = 1, left = 0, 
-                    hspace = 0, wspace = 0)
-                plt.margins(0,0)
-                plt.ylim(y_min,y_max)
-                plt.plot(cut_recon,'.',markersize = ms,color=col)
-                plt.savefig((output_dir+'size_orig_'+str(size_orig)+'_scaling_'+str(scaling)+'_weight_decay_'+str(wd)+'_n_epochs_'+str(n_epochs)+'_image_'+str(i)).replace('.',',')+'_cut.png')
-                plt.close(g)
-                if scaling==1:
-                    ax = fig_different_weightdecays.add_subplot(gs_different_weightdecays[2*i+1,2+i_reg])
-                    ax.set_xticks([])
-                    ax.set_yticks([])
-                    ax.set_box_aspect(.5)
-                    ax.plot(cut_recon,'.',markersize = ms,color=col)
-                    ax.set_ylim(y_min,y_max)
+                    # Plot cut through output image
+                    cut_recon = copy.deepcopy(recon[height[i]*scaling,:])
+                    g = plt.figure()
+                    plt.subplots_adjust(top = 1, bottom = 0, right = 1, left = 0, 
+                        hspace = 0, wspace = 0)
+                    plt.margins(0,0)
+                    plt.ylim(y_min,y_max)
+                    plt.plot(cut_recon,'.',markersize = ms,color=col)
+                    plt.savefig((output_dir+'size_orig_'+str(size_orig)+'_scaling_'+str(scaling)+'_weight_decay_'+str(wd)+'_n_epochs_'+str(n_epochs)+'_image_'+str(i)).replace('.',',')+'_cut.png')
+                    plt.close(g)
+                    if scaling==1:
+                        ax = fig_different_weightdecays.add_subplot(gs_different_weightdecays[2*i+1,2+i_reg])
+                        ax.set_xticks([])
+                        ax.set_yticks([])
+                        ax.set_box_aspect(.5)
+                        ax.plot(cut_recon,'.',markersize = ms,color=col)
+                        ax.set_ylim(y_min,y_max)
 
-                if reg == 0.001:
-                    ax = fig_different_resolutions.add_subplot(gs_different_resolutions[2*i+1,2+i_scaling])
-                    ax.set_xticks([])
-                    ax.set_yticks([])
-                    ax.set_box_aspect(.5)
-                    ax.plot(cut_recon,'.',markersize = ms,color=col)
-                    ax.set_ylim(y_min,y_max)
+                    if reg == 0.001:
+                        ax = fig_different_resolutions.add_subplot(gs_different_resolutions[2*i+1,2+i_scaling])
+                        ax.set_xticks([])
+                        ax.set_yticks([])
+                        ax.set_box_aspect(.5)
+                        ax.plot(cut_recon,'.',markersize = ms,color=col)
+                        ax.set_ylim(y_min,y_max)
 
 fig_different_weightdecays.savefig(output_dir+'comparison_weight_decays.png')
 fig_different_resolutions.savefig(output_dir+'comparison_resolutions.png')
