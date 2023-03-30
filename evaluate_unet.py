@@ -218,8 +218,16 @@ with torch.no_grad():
                 model.eval()
                 model.to(device)
                 wd = (reg/(scaling)**2)
-                model_path = model_dir + 'size_orig_'+str(size_orig)+'_scaling_'+str(scaling)+'_weight_decay_'+str(wd)+'_n_epochs_'+str(n_epochs)+'.pt'
-                model.load_state_dict(torch.load(model_path,map_location=device))
+                model_name = 'size_orig_'+str(size_orig)+'_scaling_'+str(scaling)+'_weight_decay_'+str(wd)+'_n_epochs_'+str(n_epochs)+'.pt'
+                model_path = model_dir + model_name
+                try:
+                    model.load_state_dict(torch.load(model_path,map_location=device))
+                except:
+                    print('There are no pretrained models available. We download the weights from Zenodo...')
+                    if not os.path.exists(model_dir):
+                        os.makedirs(model_dir)
+                    os.system("wget -O " + model_path + " https://zenodo.org/record/7784039/files/" + model_name)
+                    model.load_state_dict(torch.load(model_path,map_location=device))
                 recon = model(noisy.unsqueeze(0).unsqueeze(0)).detach().cpu().numpy()
 
                 # Plot output image
