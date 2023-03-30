@@ -21,7 +21,7 @@ This will reproduce the U-net results and store them in the folder `data/results
 
 While we provide the pre-trained U-nets via [Zenodo](https://zenodo.org/record/7784039#.ZCVGjR5ByXI), it is also possible to train the nets yourself. Simply run 
 ```
-poetry run python unet_circles.py
+poetry run python unet_training.py
 ```
 from the root directory of the repository. Note, however, that this requires a decent GPU and will take some time (more than a day). You can change the training hyperparameters within the file, e.g., train with fewer epochs, but this might lead to different results.
 
