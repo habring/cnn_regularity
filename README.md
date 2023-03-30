@@ -26,7 +26,7 @@ poetry run python unet_training.py
 from the root directory of the repository. Note, however, that this requires a decent GPU and will take some time (more than a day). You can change the training hyperparameters within the file, e.g., train with fewer epochs, but this might lead to different results.
 
 ## U-net
-The code for the U-net contained in the folder `models/trunks` was mostly taken from [Git repository](https://github.com/aangelopoulos/im2im-uq) which contains the code to reproduce the results of the paper [Image-to-Image Regression with Distribution-Free Uncertainty Quantification and Applications in Imaging](https://arxiv.org/abs/2202.05265) by Angelopoulos, Anastasios et al.
+The code for the U-net contained in the folder `models/trunks` was mostly taken from this [git repository](https://github.com/aangelopoulos/im2im-uq) which contains the code to reproduce the results of the paper [Image-to-Image Regression with Distribution-Free Uncertainty Quantification and Applications in Imaging](https://arxiv.org/abs/2202.05265) by Angelopoulos, Anastasios et al.
 
 ## Authors
 
