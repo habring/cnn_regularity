@@ -3,7 +3,7 @@ In this repository we provide the source code to reproduce the U-net results fro
 
 ## Requirements
 * Python 3 (versions >=3.9, <3.12).
-* [Poetry](https://python-poetry.org/docs/) is used for dependency management. For details about the used packages (and their versions) see the file `pyproject.toml`.
+* [Poetry](https://python-poetry.org/docs/) (version 1.4.1) is used for dependency management. For details about the used packages (and their versions) see the file `pyproject.toml`.
 * `wget` is used to download the pre-trained U-nets automatically.
 
 ## Reproduction of the results
