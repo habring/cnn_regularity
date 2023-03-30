@@ -13,7 +13,7 @@ This should install all necessary dependencies. Afterwards, from the root direct
 ```
 poetry run python evaluate_unet.py
 ```
-This will reproduce the u-net results and store them in the folder `data/results/unet`. When running the code for the first time, this might take a while as the pre-trained u-nets will be downloaded from [Zenodo](https://zenodo.org/record/7784039#.ZCVGjR5ByXI).
+This will reproduce the U-net results and store them in the folder `data/results/unet`. When running the code for the first time, this might take a while as the pre-trained U-nets will be downloaded from [Zenodo](https://zenodo.org/record/7784039#.ZCVGjR5ByXI). Among the stored files you will find individual images of all reconstructions as well as two images containing a comparison of all results similar to the ones shown in the paper. The comparison images are named `comparison_resolutions.png` and `comparison_weight_decays.png`.
 
 ## Network Training
 
