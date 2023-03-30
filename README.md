@@ -35,7 +35,7 @@ The code for the U-net contained in the folder `models/trunks` was mostly taken 
 
 ## Acknowledgements
 
-Martin Holler further is a member of NAWI Graz (https://www.nawigraz.at) and BioTechMed Graz (https://biotechmedgraz.at).
+Martin Holler is a member of NAWI Graz (https://www.nawigraz.at) and BioTechMed Graz (https://biotechmedgraz.at).
 
 ## Citation
 
